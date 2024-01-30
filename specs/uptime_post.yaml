@@ -1,0 +1,104 @@
+openapi: 3.0.0
+info:
+  title: Example API
+  version: 1.0.0
+  description: API for posting configuration data
+servers:
+  - url: 'https://api.example.com/v1'
+    description: Main server
+
+paths:
+  /postConfig:
+    post:
+      summary: Post configuration data
+      description: Sends configuration data to the server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfigData'
+      responses:
+        '200':
+          description: Successfully received the data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '400':
+          description: Invalid input
+
+components:
+  schemas:
+    ConfigData:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [http, ssl, grpc, dns, tcp]
+        timeout:
+          type: string
+        frequency:
+          type: string
+        http:
+          $ref: '#/components/schemas/HttpConfig'
+
+    HttpConfig:
+      type: object
+      properties:
+        method:
+          type: string
+          enum: [GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD]
+        url:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        basic_auth:
+          $ref: '#/components/schemas/BasicAuth'
+        valid_http_versions:
+          type: array
+          items:
+            type: string
+        valid_status_codes:
+          type: array
+          items:
+            type: integer
+        follow_redirects:
+          type: boolean
+        fail_if_body_not_matches_regexp:
+          type: array
+          items:
+            type: string
+        fail_if_header_not_matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/HeaderMatch'
+        body_match:
+          $ref: '#/components/schemas/BodyMatch'
+
+    BasicAuth:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    HeaderMatch:
+      type: object
+      properties:
+        header:
+          type: string
+        regexp:
+          type: string
+
+    BodyMatch:
+      type: object
+      properties:
+        regexp:
+          type: string
