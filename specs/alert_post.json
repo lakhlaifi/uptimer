@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Alert API
+  version: 1.0.0
+  description: API for posting alert configurations
+servers:
+  - url: 'https://api.yourdomain.com/v1'
+    description: Main server
+
+paths:
+  /post_alert:
+    post:
+      summary: Post alert configuration
+      description: Sends alert configuration data to the server
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlertConfig'
+      responses:
+        '200':
+          description: Successfully received the configuration
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Alert configuration received successfully'
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    AlertConfig:
+      type: object
+      required:
+        - contact_group
+      properties:
+        recovery_period:
+          type: string
+          example: '5minutes'
+          description: The period after which the alert is considered recovered
+        confirmation_period:
+          type: string
+          example: '5minutes'
+          description: The period for confirming the alert
+        contact_group:
+          type: string
+          example: 'default'
+          description: The contact group to notify
